@@ -34,7 +34,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             switch (messageText){
                 case "/start":
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                    greeting(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
@@ -43,8 +43,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void startCommandReceived(long chatId, String name){
-        String answer = "Привет, " + name + ", я Бот, люблю тебя";
+    private void greeting(long chatId, String userName){
+        String answer = "Привет! " + userName +".\n";
+        answer += "Я бот-помощник Михаила Ларионова.\n";
+        answer += "Чем я могу Вам помочь?";
         sendMessage(chatId, answer);
     }
 
