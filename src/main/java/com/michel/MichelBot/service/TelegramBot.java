@@ -36,6 +36,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/start":
                     greeting(chatId, update.getMessage().getChat().getFirstName());
                     break;
+                case "/tg":
+                    sendTGReference(chatId);
+                    break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
             }
@@ -47,6 +50,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         String answer = "Привет! " + userName +".\n";
         answer += "Я бот-помощник Михаила Ларионова.\n";
         answer += "Чем я могу Вам помочь?";
+        sendMessage(chatId, answer);
+    }
+
+    private void sendTGReference(long chatId){
+        String answer = "Telegram: " + ".\n";
         sendMessage(chatId, answer);
     }
 
