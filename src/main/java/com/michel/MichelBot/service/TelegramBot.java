@@ -39,9 +39,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                     greeting(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 case "/tg":
-                    //sendMessage(chatId, message.tgref);
+                    sendTGReference(chatId);
                     break;
-
+                case "/vk":
+                    sendVKReference(chatId);
+                    break;
+                case "/github":
+                    sendGithubReference(chatId);
+                    break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
             }
@@ -57,7 +62,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void sendTGReference(long chatId){
-        String answer = "Telegram: " + ".\n";
+        String answer = "Telegram: " + config.getTgRef() + ".\n";
+        sendMessage(chatId, answer);
+    }
+
+    private void sendVKReference(long chatId){
+        String answer = "VK: " + config.getVkRef() + ".\n";
+        sendMessage(chatId, answer);
+    }
+
+    private void sendGithubReference(long chatId){
+        String answer = "GitHub: " + config.getGithubRef() + ".\n";
         sendMessage(chatId, answer);
     }
 
