@@ -39,8 +39,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     greeting(chatId, update.getMessage().getChat().getFirstName());
                     break;
                 case "/tg":
-                    sendTGReference(chatId);
+                    //sendMessage(chatId, message.tgref);
                     break;
+
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
             }

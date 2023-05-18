@@ -7,6 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @Data
+@PropertySource("string.properties")
 @PropertySource("application.properties")
 public class BotConfig {
 
@@ -16,4 +17,12 @@ public class BotConfig {
     @Value("${bot.token}")
     String token;
 
+    @Value("${message.tg}")
+    String tgRef;
+
+    @Value("${message.vk}")
+    String vkRef;
+
+    @Value("${message.github}")
+    String githubRef;
 }
