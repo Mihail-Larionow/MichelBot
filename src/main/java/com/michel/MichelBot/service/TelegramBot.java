@@ -37,6 +37,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             switch (messageText){
                 case "/start":
                     greeting(chatId, update.getMessage().getChat().getFirstName());
+                    
                     break;
                 case "/tg":
                     sendTGReference(chatId);
