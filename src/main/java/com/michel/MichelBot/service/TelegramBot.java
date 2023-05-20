@@ -47,6 +47,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/github":
                     sendGithubReference(chatId);
                     break;
+                case "/help":
+                    help(chatId);
+                    break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
             }
@@ -77,7 +80,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void help(long chatId){
-
+        String answer = "Список доступных команд:\n";
+        answer += "/tg - ссылка на аккаунт в telegram\n";
+        answer += "/vk - ссылка на аккаунт в vkontakte\n";
+        answer += "/github - ссылка на аккаунт на github\n";
+        sendMessage(chatId, answer);
     }
 
     private void sendMessage(long chatId, String text){
