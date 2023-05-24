@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
@@ -63,9 +65,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/gh":
                     sendGithubReference(chatId);
                     break;
-                //case "/info":
-
-                    //break;
+                case "/info":
+                    info(chatId);
+                    break;
                 case "/help":
                     help(chatId);
                     break;
@@ -98,6 +100,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage(chatId, answer);
     }
 
+    private void info(long chatId){
+        String answer = "Какую информацию вы хотите получить?\n";
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("TG");
+        row.add("VK");
+        keyboardRows.add(row);
+        row = new KeyboardRow();
+        row.add("GitHub");
+        keyboardRows.add(row);
+        replyKeyboardMarkup.setKeyboard(keyboardRows);
+        sendMessage(chatId, answer, replyKeyboardMarkup);
+    }
+
     private void help(long chatId){
         String answer = "Список доступных команд:\n";
         answer += "/tg - ссылка на аккаунт в telegram\n";
@@ -110,6 +127,19 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+    }
+
+    private void sendMessage(long chatId, String text, ReplyKeyboardMarkup keyboardMarkup){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
 
         try{
             execute(message);
