@@ -4,9 +4,15 @@ import com.michel.MichelBot.config.BotConfig;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @PropertySource("application.properties")
@@ -16,6 +22,15 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public TelegramBot(BotConfig config){
         this.config = config;
+        List<BotCommand> commands = new ArrayList<>();
+        commands.add(new BotCommand("/tg", "get Telegram reference"));
+        commands.add(new BotCommand("/vk", "get VK reference"));
+        commands.add(new BotCommand("/gh", "get telegram reference"));
+        try{
+            this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
+        }catch(TelegramApiException e){
+
+        }
     }
 
     @Override
@@ -45,9 +60,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/vk":
                     sendVKReference(chatId);
                     break;
-                case "/github":
+                case "/gh":
                     sendGithubReference(chatId);
                     break;
+                //case "/info":
+
+                    //break;
                 case "/help":
                     help(chatId);
                     break;
@@ -76,7 +94,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void sendGithubReference(long chatId){
-        String answer = "GitHub: " + config.getGithubRef() + ".\n";
+        String answer = "GitHub: " + config.getGhRef() + ".\n";
         sendMessage(chatId, answer);
     }
 

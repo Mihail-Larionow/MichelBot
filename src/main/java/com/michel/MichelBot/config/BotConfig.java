@@ -24,5 +24,5 @@ public class BotConfig {
     String vkRef;
 
     @Value("${message.github}")
-    String githubRef;
+    String ghRef;
 }
