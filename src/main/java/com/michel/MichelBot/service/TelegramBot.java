@@ -23,9 +23,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     public TelegramBot(BotConfig config){
         this.config = config;
         List<BotCommand> commands = new ArrayList<>();
-        commands.add(new BotCommand("/tg", "get Telegram reference"));
-        commands.add(new BotCommand("/vk", "get VK reference"));
-        commands.add(new BotCommand("/gh", "get telegram reference"));
+        commands.add(new BotCommand("/tg", "Get Telegram reference"));
+        commands.add(new BotCommand("/vk", "Get VK reference"));
+        commands.add(new BotCommand("/gh", "Get GitHub reference"));
         try{
             this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
         }catch(TelegramApiException e){
