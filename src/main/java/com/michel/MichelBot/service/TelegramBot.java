@@ -21,6 +21,10 @@ import java.util.List;
 public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfig config;
+    final String helpText = "Список доступных команд:\n"
+        + "/tg - ссылка на аккаунт в telegram\n"
+        + "/vk - ссылка на аккаунт в vkontakte\n"
+        + "/github - ссылка на аккаунт на github\n";
 
     public TelegramBot(BotConfig config){
         this.config = config;
@@ -54,7 +58,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             switch (messageText){
                 case "/start":
                     greeting(chatId, update.getMessage().getChat().getFirstName());
-                    help(chatId);
+                    sendMessage(chatId, helpText);
                     break;
                 case "/tg":
                     sendTGReference(chatId);
@@ -69,7 +73,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     info(chatId);
                     break;
                 case "/help":
-                    help(chatId);
+                    sendMessage(chatId, helpText);
                     break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
@@ -115,13 +119,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage(chatId, answer, replyKeyboardMarkup);
     }
 
-    private void help(long chatId){
-        String answer = "Список доступных команд:\n";
-        answer += "/tg - ссылка на аккаунт в telegram\n";
-        answer += "/vk - ссылка на аккаунт в vkontakte\n";
-        answer += "/github - ссылка на аккаунт на github\n";
-        sendMessage(chatId, answer);
-    }
 
     private void sendMessage(long chatId, String text){
         SendMessage message = new SendMessage();
