@@ -26,12 +26,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         + "/vk - ссылка на аккаунт в vkontakte\n"
         + "/github - ссылка на аккаунт на github\n";
 
+    final String aboutText = "Данный бот - бот-визитка.";
+
     public TelegramBot(BotConfig config){
         this.config = config;
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("/tg", "Get Telegram reference"));
         commands.add(new BotCommand("/vk", "Get VK reference"));
         commands.add(new BotCommand("/gh", "Get GitHub reference"));
+        commands.add(new BotCommand("/about", "Information about this bot"));
         try{
             this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
         }catch(TelegramApiException e){
@@ -74,6 +77,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case "/help":
                     sendMessage(chatId, helpText);
+                    break;
+                case "/about":
+                    sendMessage(chatId, aboutText);
                     break;
                 default:
                     sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
