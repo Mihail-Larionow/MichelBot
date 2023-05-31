@@ -9,7 +9,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -107,7 +109,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void sendGithubReference(long chatId){
         String answer = "GitHub: " + config.getGhRef() + ".\n";
-        sendMessage(chatId, answer);
+        String buttonText = "GitHub";
+        sendMessageWithButton(chatId, answer, buttonText);
     }
 
     private void info(long chatId){
@@ -142,6 +145,31 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+    }
+
+    private void sendMessageWithButton(long chatId, String text, String buttonText){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var button = new InlineKeyboardButton();
+        button.setText("GitHub");
+        button.setCallbackData(buttonText + "_BUTTON");
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        keyboardMarkup.setKeyboard(rowsInLine);
         message.setReplyMarkup(keyboardMarkup);
 
         try{
