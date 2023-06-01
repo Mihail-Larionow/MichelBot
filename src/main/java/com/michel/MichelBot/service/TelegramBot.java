@@ -18,25 +18,33 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Component
 @PropertySource("application.properties")
 public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfig config;
-    final String helpText = "Список доступных команд:\n"
-        + "/tg - ссылка на аккаунт в telegram\n"
-        + "/vk - ссылка на аккаунт в vkontakte\n"
-        + "/github - ссылка на аккаунт на github\n";
 
-    final String aboutText = "Данный бот - бот-визитка.";
+    final String greetingText = """
+            Привет! Я бот-помощник Михаила!
+            Чем я могу Вам помочь?
+            """;
+
+    final String infoText = """
+            Привет! Меня зовут Ларионов Михаил!
+            """;
+    final String goButtonText = "Перейти";
+
+    final String aboutText = "Я - бот-визитка.\n Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub";
 
     public TelegramBot(BotConfig config){
         this.config = config;
         List<BotCommand> commands = new ArrayList<>();
-        commands.add(new BotCommand("/tg", "Get Telegram reference"));
-        commands.add(new BotCommand("/vk", "Get VK reference"));
-        commands.add(new BotCommand("/gh", "Get GitHub reference"));
         commands.add(new BotCommand("/about", "Information about this bot"));
+        commands.add(new BotCommand("/info", "Information about author"));
+        commands.add(new BotCommand("/tg", "Telegram reference"));
+        commands.add(new BotCommand("/vk", "VK reference"));
+        commands.add(new BotCommand("/gh", "GitHub reference"));
         try{
             this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
         }catch(TelegramApiException e){
@@ -57,75 +65,94 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        if(update.hasMessage() && update.getMessage().hasText()){
+        if(update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            switch (messageText){
-                case "/start":
-                    greeting(chatId, update.getMessage().getChat().getFirstName());
-                    sendMessage(chatId, helpText);
-                    break;
-                case "/tg":
-                    sendTGReference(chatId);
-                    break;
-                case "/vk":
-                    sendVKReference(chatId);
-                    break;
-                case "/gh":
-                    sendGithubReference(chatId);
-                    break;
-                case "/info":
-                    info(chatId);
-                    break;
-                case "/help":
-                    sendMessage(chatId, helpText);
-                    break;
-                case "/about":
-                    sendMessage(chatId, aboutText);
-                    break;
-                default:
-                    sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
-            }
+            handleMessage(chatId, messageText);
+        } else if (update.hasCallbackQuery()) {
+            String callbackData = update.getCallbackQuery().getData();
+            long chatId = update.getCallbackQuery().getMessage().getChatId();
+            handleCallback(chatId, callbackData);
         }
 
     }
 
-    private void greeting(long chatId, String userName){
-        String answer = "Привет! " + userName +".\n";
-        answer += "Я бот-помощник Михаила Ларионова.\n";
-        answer += "Чем я могу Вам помочь?";
-        sendMessage(chatId, answer);
+    private void handleMessage(long chatId, String messageText){
+        switch (messageText){
+            case "/start":
+                sendMessage(chatId, greetingText);
+                break;
+            case "/tg":
+                sendMessageWithUrl(chatId, "Telegram аккаунт Михаила", "TG_BUTTON", config.getTgRef());
+                break;
+            case "/vk":
+                sendMessageWithUrl(chatId, "VK аккаунт Михаила", "VK_BUTTON", config.getVkRef());
+                break;
+            case "/gh":
+                sendMessageWithUrl(chatId, "GitHub профиль Михаила", "GH_BUTTON", config.getGhRef());
+                break;
+            case "/info":
+                info(chatId);
+                break;
+            case "/about":
+                about(chatId);
+                break;
+            default:
+                sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
+        }
     }
 
-    private void sendTGReference(long chatId){
-        String answer = "Telegram: " + config.getTgRef() + ".\n";
-        sendMessage(chatId, answer);
+    private void handleCallback(long chatId, String callbackData){
+        switch (callbackData){
+
+        }
+
     }
 
-    private void sendVKReference(long chatId){
-        String answer = "VK: " + config.getVkRef() + ".\n";
-        sendMessage(chatId, answer);
-    }
+    private void about(long chatId){
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
 
-    private void sendGithubReference(long chatId){
-        String answer = "GitHub: " + config.getGhRef() + ".\n";
-        String buttonText = "GitHub";
-        sendMessageWithButton(chatId, answer, buttonText);
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText("MichelBot");
+        button.setUrl(config.getCodeRef());
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        keyboardMarkup.setKeyboard(rowsInLine);
+
+        sendMessage(chatId, aboutText, keyboardMarkup);
     }
 
     private void info(long chatId){
-        String answer = "Какую информацию вы хотите получить?\n";
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        row.add("TG");
-        row.add("VK");
-        keyboardRows.add(row);
-        row = new KeyboardRow();
-        row.add("GitHub");
-        keyboardRows.add(row);
-        replyKeyboardMarkup.setKeyboard(keyboardRows);
-        sendMessage(chatId, answer, replyKeyboardMarkup);
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText("Telegram");
+        button.setUrl(config.getTgRef());
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        rowInLine = new ArrayList<>();
+        button = new InlineKeyboardButton();
+        button.setText("VK");
+        button.setUrl(config.getVkRef());
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        rowInLine = new ArrayList<>();
+        button = new InlineKeyboardButton();
+        button.setText("GitHub");
+        button.setUrl(config.getGhRef());
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        keyboardMarkup.setKeyboard(rowsInLine);
+
+        sendMessage(chatId, infoText, keyboardMarkup);
     }
 
 
@@ -154,7 +181,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendMessageWithButton(long chatId, String text, String buttonText){
+    private void sendMessage(long chatId, String text, InlineKeyboardMarkup keyboardMarkup){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+
+    }
+
+    private void sendMessageWithUrl(long chatId, String text, String callbackName, String url){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
@@ -164,8 +205,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
         var button = new InlineKeyboardButton();
-        button.setText("GitHub");
-        button.setCallbackData(buttonText + "_BUTTON");
+        button.setText("Перейти");
+        button.setCallbackData(callbackName);
+        button.setUrl(url);
+
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
@@ -177,5 +220,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
 
         }
+
     }
+
 }

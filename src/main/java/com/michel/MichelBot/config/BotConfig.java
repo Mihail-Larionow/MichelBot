@@ -25,4 +25,7 @@ public class BotConfig {
 
     @Value("${message.github}")
     String ghRef;
+
+    @Value("${message.code}")
+    String codeRef;
 }
