@@ -33,6 +33,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     final String infoText = """
             Привет! Меня зовут Ларионов Михаил!
             """;
+            
     final String goButtonText = "Перейти";
 
     final String aboutText = "Я - бот-визитка.\n Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub";
