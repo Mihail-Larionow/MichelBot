@@ -5,6 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -12,9 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,19 +34,20 @@ public class TelegramBot extends TelegramLongPollingBot {
     final String infoText = """
             Привет! Меня зовут Ларионов Михаил!
             """;
-            
-    final String goButtonText = "Перейти";
 
     final String aboutText = "Я - бот-визитка.\n Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub";
+
+    final String aboutDictophone = "Dictophone - приложение для сохранения аудио заметок.\n";
+    final String aboutFriendsMap = "Friends Map - приложение, которое позволяет увидеть где находятся твои друзья VK.\n";
+    final String aboutRubikCube = "Rubik's Cube - приложение, позволяющее понастольгировать, играя в кубик рубика.\n";
+    final String aboutWeatherIt = "WeatherIt - самое простое погодное приложение.\n";
 
     public TelegramBot(BotConfig config){
         this.config = config;
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("/about", "Information about this bot"));
         commands.add(new BotCommand("/info", "Information about author"));
-        commands.add(new BotCommand("/tg", "Telegram reference"));
-        commands.add(new BotCommand("/vk", "VK reference"));
-        commands.add(new BotCommand("/gh", "GitHub reference"));
+        commands.add(new BotCommand("/projects", "Other projects"));
         try{
             this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
         }catch(TelegramApiException e){
@@ -81,16 +83,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void handleMessage(long chatId, String messageText){
         switch (messageText){
             case "/start":
-                sendMessage(chatId, greetingText);
+                sendSimpleMessage(chatId, greetingText);
                 break;
-            case "/tg":
-                sendMessageWithUrl(chatId, "Telegram аккаунт Михаила", "TG_BUTTON", config.getTgRef());
-                break;
-            case "/vk":
-                sendMessageWithUrl(chatId, "VK аккаунт Михаила", "VK_BUTTON", config.getVkRef());
-                break;
-            case "/gh":
-                sendMessageWithUrl(chatId, "GitHub профиль Михаила", "GH_BUTTON", config.getGhRef());
+            case "/projects":
+                sendMessageWithUrl(chatId, aboutDictophone, config.getDictophone());
+                sendMessageWithUrl(chatId, aboutFriendsMap, config.getFriendsMap());
+                sendMessageWithUrl(chatId, aboutRubikCube, config.getRubiksCube());
+                sendMessageWithUrl(chatId, aboutWeatherIt, config.getWeatherIt());
                 break;
             case "/info":
                 info(chatId);
@@ -99,7 +98,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 about(chatId);
                 break;
             default:
-                sendMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
+                sendSimpleMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
         }
     }
 
@@ -123,7 +122,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendMessage(chatId, aboutText, keyboardMarkup);
+        sendSimpleMessage(chatId, aboutText, keyboardMarkup);
     }
 
     private void info(long chatId){
@@ -153,11 +152,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendMessage(chatId, infoText, keyboardMarkup);
+        sendSimpleMessage(chatId, infoText, keyboardMarkup);
     }
 
 
-    private void sendMessage(long chatId, String text){
+    private void sendSimpleMessage(long chatId, String text){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
@@ -169,20 +168,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendMessage(long chatId, String text, ReplyKeyboardMarkup keyboardMarkup){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        message.setReplyMarkup(keyboardMarkup);
-
-        try{
-            execute(message);
-        }catch(TelegramApiException e){
-
-        }
-    }
-
-    private void sendMessage(long chatId, String text, InlineKeyboardMarkup keyboardMarkup){
+    private void sendSimpleMessage(long chatId, String text, ReplyKeyboardMarkup keyboardMarkup){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
@@ -193,10 +179,23 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
 
         }
+    }
+
+    private void sendSimpleMessage(long chatId, String text, InlineKeyboardMarkup keyboardMarkup){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
 
     }
 
-    private void sendMessageWithUrl(long chatId, String text, String callbackName, String url){
+    private void sendMessageWithUrl(long chatId, String text, String url){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
@@ -207,7 +206,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         var button = new InlineKeyboardButton();
         button.setText("Перейти");
-        button.setCallbackData(callbackName);
         button.setUrl(url);
 
         rowInLine.add(button);
@@ -221,6 +219,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
 
         }
+    }
+
+    private void sendFile(long chatId, String text, File file){
+        SendDocument message = new SendDocument();
+        message.setChatId(String.valueOf(chatId));
+        message.setCaption(text);
 
     }
 

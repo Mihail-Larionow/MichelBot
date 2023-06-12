@@ -28,4 +28,16 @@ public class BotConfig {
 
     @Value("${message.code}")
     String codeRef;
+
+    @Value("${message.dictophone}")
+    String dictophone;
+
+    @Value("${message.friendsMap}")
+    String friendsMap;
+
+    @Value("${message.rubiksCube}")
+    String rubiksCube;
+
+    @Value("${message.weatherIt}")
+    String weatherIt;
 }
