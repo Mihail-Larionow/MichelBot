@@ -1,12 +1,14 @@
 package com.michel.MichelBot.service;
 
 import com.michel.MichelBot.config.BotConfig;
+import com.michel.MichelBot.config.BotPhrases;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -25,25 +27,11 @@ import java.util.List;
 public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfig config;
-
-    final String greetingText = """
-            Привет! Я бот-помощник Михаила!
-            Чем я могу Вам помочь?
-            """;
-
-    final String infoText = """
-            Привет! Меня зовут Ларионов Михаил!
-            """;
-
-    final String aboutText = "Я - бот-визитка.\n Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub";
-
-    final String aboutDictophone = "Dictophone - приложение для сохранения аудио заметок.\n";
-    final String aboutFriendsMap = "Friends Map - приложение, которое позволяет увидеть где находятся твои друзья VK.\n";
-    final String aboutRubikCube = "Rubik's Cube - приложение, позволяющее понастольгировать, играя в кубик рубика.\n";
-    final String aboutWeatherIt = "WeatherIt - самое простое погодное приложение.\n";
+    final BotPhrases phrases;
 
     public TelegramBot(BotConfig config){
         this.config = config;
+        this.phrases = new BotPhrases();
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("/about", "Information about this bot"));
         commands.add(new BotCommand("/info", "Information about author"));
@@ -83,13 +71,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void handleMessage(long chatId, String messageText){
         switch (messageText){
             case "/start":
-                sendSimpleMessage(chatId, greetingText);
+                sendSimpleMessage(chatId, phrases.greeting);
                 break;
             case "/projects":
-                sendMessageWithUrl(chatId, aboutDictophone, config.getDictophone());
-                sendMessageWithUrl(chatId, aboutFriendsMap, config.getFriendsMap());
-                sendMessageWithUrl(chatId, aboutRubikCube, config.getRubiksCube());
-                sendMessageWithUrl(chatId, aboutWeatherIt, config.getWeatherIt());
+                sendMessageWithUrl(chatId, phrases.aboutDictophone, phrases.getDictophone());
+                sendMessageWithUrl(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
+                sendMessageWithUrl(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
+                sendMessageWithUrl(chatId, phrases.aboutWeatherIt, phrases.getWeatherIt());
                 break;
             case "/info":
                 info(chatId);
@@ -98,7 +86,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 about(chatId);
                 break;
             default:
-                sendSimpleMessage(chatId, "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...");
+                sendSimpleMessage(chatId, phrases.unraritable);
         }
     }
 
@@ -116,13 +104,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText("MichelBot");
-        button.setUrl(config.getCodeRef());
+        button.setUrl(phrases.getCodeRef());
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendSimpleMessage(chatId, aboutText, keyboardMarkup);
+        sendSimpleMessage(chatId, phrases.aboutBot, keyboardMarkup);
     }
 
     private void info(long chatId){
@@ -132,27 +120,27 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText("Telegram");
-        button.setUrl(config.getTgRef());
+        button.setUrl(phrases.getTgRef());
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
         rowInLine = new ArrayList<>();
         button = new InlineKeyboardButton();
         button.setText("VK");
-        button.setUrl(config.getVkRef());
+        button.setUrl(phrases.getVkRef());
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
         rowInLine = new ArrayList<>();
         button = new InlineKeyboardButton();
         button.setText("GitHub");
-        button.setUrl(config.getGhRef());
+        button.setUrl(phrases.getGhRef());
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendSimpleMessage(chatId, infoText, keyboardMarkup);
+        sendSimpleMessage(chatId, phrases.aboutMihail, keyboardMarkup);
     }
 
 
@@ -225,7 +213,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendDocument message = new SendDocument();
         message.setChatId(String.valueOf(chatId));
         message.setCaption(text);
-
+        message.setDocument(new InputFile(file));
     }
     
 
