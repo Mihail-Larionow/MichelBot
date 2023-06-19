@@ -41,6 +41,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
 
         }
+
+        System.out.println(phrases.aboutDictophone);
     }
 
     @Override
@@ -74,7 +76,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendSimpleMessage(chatId, phrases.greeting);
                 break;
             case "/projects":
-                System.out.println("projects");
                 sendMessageWithUrl(chatId, phrases.aboutDictophone, phrases.getDictophone());
                 sendMessageWithUrl(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
                 sendMessageWithUrl(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
@@ -106,6 +107,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText("MichelBot");
         button.setUrl(phrases.getCodeRef());
+        button.setCallbackData("BUTTON");
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
@@ -122,6 +124,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText("Telegram");
         button.setUrl(phrases.getTgRef());
+        button.setCallbackData("BUTTON");
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
@@ -129,6 +132,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         button = new InlineKeyboardButton();
         button.setText("VK");
         button.setUrl(phrases.getVkRef());
+        button.setCallbackData("BUTTON");
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
@@ -136,6 +140,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         button = new InlineKeyboardButton();
         button.setText("GitHub");
         button.setUrl(phrases.getGhRef());
+        button.setCallbackData("BUTTON");
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
 
@@ -196,6 +201,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         var button = new InlineKeyboardButton();
         button.setText("Перейти");
         button.setUrl(url);
+        button.setCallbackData("BUTTON");
 
         rowInLine.add(button);
         rowsInLine.add(rowInLine);
@@ -206,8 +212,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         try{
             execute(message);
         }catch(TelegramApiException e){
-
+            System.out.println(e);
         }
+
     }
 
     private void sendFile(long chatId, String text, File file){

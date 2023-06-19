@@ -1,5 +1,6 @@
 package com.michel.MichelBot.config;
 
+import com.michel.MichelBot.utils.WebParser;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -8,31 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("string.properties")
 public class BotPhrases {
 
-
-    public final String greeting = """
-            Привет! Я бот-помощник Михаила!
-            Чем я могу Вам помочь?
-            """;
-
-    public final String aboutMihail = """
-            Привет! Меня зовут Ларионов Михаил!
-            """;
-
-
-    public final String aboutBot = """ 
-            Я - бот-визитка.
-            Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub
-            """;
-
-    public final String aboutDictophone = "parser.gitParse(getDictophone())";
-
-    public final String aboutFriendsMap = "Friends Map - приложение, которое позволяет увидеть где находятся твои друзья VK.\n";
-    
-    public final String aboutRubiksCube = "Rubik's Cube - приложение, позволяющее понастольгировать, играя в кубик рубика.\n";
-    
-    public final String aboutWeatherIt = "WeatherIt - самое простое погодное приложение.\n";
-
-    public final String unraritable = "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...";
+    WebParser parser = new WebParser();
 
     @Value("${message.tg}")
     String tgRef;
@@ -57,4 +34,30 @@ public class BotPhrases {
 
     @Value("${message.weatherIt}")
     String weatherIt;
+
+    public final String greeting = """
+            Привет! Я бот-помощник Михаила!
+            Чем я могу Вам помочь?
+            """;
+
+    public final String aboutMihail = """
+            Привет! Меня зовут Ларионов Михаил!
+            """;
+
+
+    public final String aboutBot = """ 
+            Я - бот-визитка.
+            Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub
+            """;
+
+    public final String aboutDictophone = parser.gitParse("https://github.com/Mihail-Larionow/Dictophone");
+
+    public final String aboutFriendsMap = "Friends Map - приложение, которое позволяет увидеть где находятся твои друзья VK.\n";
+    
+    public final String aboutRubiksCube = "Rubik's Cube - приложение, позволяющее понастольгировать, играя в кубик рубика.\n";
+    
+    public final String aboutWeatherIt = "WeatherIt - самое простое погодное приложение.\n";
+
+    public final String unraritable = "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...";
+
 }
