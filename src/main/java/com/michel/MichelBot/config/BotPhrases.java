@@ -7,6 +7,8 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("string.properties")
 public class BotPhrases {
+
+
     public final String greeting = """
             Привет! Я бот-помощник Михаила!
             Чем я могу Вам помочь?
@@ -22,7 +24,7 @@ public class BotPhrases {
             Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub
             """;
 
-    public final String aboutDictophone = "Dictophone - приложение для сохранения аудио заметок.\n";
+    public final String aboutDictophone = "parser.gitParse(getDictophone())";
 
     public final String aboutFriendsMap = "Friends Map - приложение, которое позволяет увидеть где находятся твои друзья VK.\n";
     

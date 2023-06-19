@@ -74,6 +74,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendSimpleMessage(chatId, phrases.greeting);
                 break;
             case "/projects":
+                System.out.println("projects");
                 sendMessageWithUrl(chatId, phrases.aboutDictophone, phrases.getDictophone());
                 sendMessageWithUrl(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
                 sendMessageWithUrl(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
