@@ -73,22 +73,22 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void handleMessage(long chatId, String messageText){
         switch (messageText){
             case "/start":
-                sendSimpleMessage(chatId, phrases.greeting);
+                sendMessage(chatId, phrases.greeting);
                 break;
             case "/projects":
-                sendMessageWithUrl(chatId, phrases.aboutDictophone, phrases.getDictophone());
-                sendMessageWithUrl(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
-                sendMessageWithUrl(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
-                sendMessageWithUrl(chatId, phrases.aboutWeatherIt, phrases.getWeatherIt());
+                sendMessage(chatId, phrases.aboutDictophone, phrases.getDictophone());
+                sendMessage(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
+                sendMessage(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
+                sendMessage(chatId, phrases.aboutWeatherIt, phrases.getWeatherIt());
                 break;
             case "/info":
-                info(chatId);
+                sendInfo(chatId);
                 break;
             case "/about":
-                about(chatId);
+                sendAbout(chatId);
                 break;
             default:
-                sendSimpleMessage(chatId, phrases.unraritable);
+                sendMessage(chatId, phrases.unraritable);
         }
     }
 
@@ -99,7 +99,88 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void about(long chatId){
+    //Send simple message
+    private void sendMessage(long chatId, String text){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+    }
+
+    //Send message with reply keyboard
+    private void sendMessage(long chatId, String text, ReplyKeyboardMarkup keyboardMarkup){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+    }
+
+    //Send message with inline keyboard
+    private void sendMessage(long chatId, String text, InlineKeyboardMarkup keyboardMarkup){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+
+        }
+
+    }
+
+    //Send message with url
+    private void sendMessage(long chatId, String text, String url){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+        var button = new InlineKeyboardButton();
+        button.setText("Перейти");
+        button.setUrl(url);
+        button.setCallbackData("BUTTON");
+
+        rowInLine.add(button);
+        rowsInLine.add(rowInLine);
+
+        keyboardMarkup.setKeyboard(rowsInLine);
+        message.setReplyMarkup(keyboardMarkup);
+
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+            System.out.println(e);
+        }
+
+    }
+
+    //Send document
+    private void sendDocument(long chatId, String text, File file){
+        SendDocument message = new SendDocument();
+        message.setChatId(String.valueOf(chatId));
+        message.setCaption(text);
+        message.setDocument(new InputFile(file));
+    }
+
+    //Send about message
+    private void sendAbout(long chatId){
+
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
 
@@ -113,10 +194,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendSimpleMessage(chatId, phrases.aboutBot, keyboardMarkup);
+        sendMessage(chatId, phrases.aboutBot, keyboardMarkup);
+
     }
 
-    private void info(long chatId){
+    //Send info message
+    private void sendInfo(long chatId){
+
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
 
@@ -146,83 +230,30 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         keyboardMarkup.setKeyboard(rowsInLine);
 
-        sendSimpleMessage(chatId, phrases.aboutMihail, keyboardMarkup);
-    }
-
-
-    private void sendSimpleMessage(long chatId, String text){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-
-        try{
-            execute(message);
-        }catch(TelegramApiException e){
-
-        }
-    }
-
-    private void sendSimpleMessage(long chatId, String text, ReplyKeyboardMarkup keyboardMarkup){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        message.setReplyMarkup(keyboardMarkup);
-
-        try{
-            execute(message);
-        }catch(TelegramApiException e){
-
-        }
-    }
-
-    private void sendSimpleMessage(long chatId, String text, InlineKeyboardMarkup keyboardMarkup){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        message.setReplyMarkup(keyboardMarkup);
-
-        try{
-            execute(message);
-        }catch(TelegramApiException e){
-
-        }
+        sendMessage(chatId, phrases.aboutMihail, keyboardMarkup);
 
     }
 
-    private void sendMessageWithUrl(long chatId, String text, String url){
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-
+    private void requestLanguage(long chatId){
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-
-        var button = new InlineKeyboardButton();
-        button.setText("Перейти");
-        button.setUrl(url);
-        button.setCallbackData("BUTTON");
-
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText("RU");
+        button.setCallbackData("RU_LANG_BUTTON");
         rowInLine.add(button);
+
+        button = new InlineKeyboardButton();
+        button.setText("EN");
+        button.setCallbackData("EN_LANG_BUTTON");
+        rowInLine.add(button);
+
         rowsInLine.add(rowInLine);
 
         keyboardMarkup.setKeyboard(rowsInLine);
-        message.setReplyMarkup(keyboardMarkup);
 
-        try{
-            execute(message);
-        }catch(TelegramApiException e){
-            System.out.println(e);
-        }
-
+        sendMessage(chatId, phrases.languageRequest, keyboardMarkup);
     }
-
-    private void sendFile(long chatId, String text, File file){
-        SendDocument message = new SendDocument();
-        message.setChatId(String.valueOf(chatId));
-        message.setCaption(text);
-        message.setDocument(new InputFile(file));
-    }
-    
 
 }
