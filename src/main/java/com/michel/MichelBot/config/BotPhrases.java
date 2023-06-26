@@ -1,6 +1,5 @@
 package com.michel.MichelBot.config;
 
-import com.michel.MichelBot.utils.WebParser;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -8,8 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @PropertySource("string.properties")
 public class BotPhrases {
-
-    WebParser parser = new WebParser();
 
     @Value("${message.tg}")
     String tgRef;
@@ -44,7 +41,6 @@ public class BotPhrases {
             Привет! Меня зовут Ларионов Михаил!
             """;
 
-
     public final String aboutBot = """ 
             Я - бот-визитка.
             Разработан на Java с использованием фреймворка Spring. Мой исходный код на GitHub
@@ -54,13 +50,13 @@ public class BotPhrases {
             На каком языке Вам комфортнее всего будет общаться?
             """;
 
-    public final String aboutDictophone = parser.gitParse("https://github.com/Mihail-Larionow/Dictophone");
+    public final String aboutDictophone = "Dictophone";
 
-    public final String aboutFriendsMap = parser.gitParse("https://github.com/Mihail-Larionow/Dictophone");
+    public final String aboutFriendsMap = "aboutFriendsMap";
     
-    public final String aboutRubiksCube = parser.gitParse("https://github.com/Mihail-Larionow/Dictophone");
+    public final String aboutRubiksCube = "aboutRubiksCube";
     
-    public final String aboutWeatherIt = parser.gitParse("https://github.com/Mihail-Larionow/Dictophone");
+    public final String aboutWeatherIt = "aboutWeatherIt";
 
     public final String unraritable = "Прости, пока что я слишком глуп и не понимаю чего ты от меня хочешь...";
 

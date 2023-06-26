@@ -2,9 +2,11 @@ package com.michel.MichelBot.service;
 
 import com.michel.MichelBot.config.BotConfig;
 import com.michel.MichelBot.config.BotPhrases;
+import com.michel.MichelBot.info.Projects;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -26,12 +28,13 @@ import java.util.List;
 @PropertySource("application.properties")
 public class TelegramBot extends TelegramLongPollingBot {
 
-    final BotConfig config;
-    final BotPhrases phrases;
+    private final BotConfig config;
+    private final BotPhrases phrases;
 
     public TelegramBot(BotConfig config){
         this.config = config;
         this.phrases = new BotPhrases();
+
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("/about", "Information about this bot"));
         commands.add(new BotCommand("/info", "Information about author"));
@@ -41,8 +44,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
 
         }
-
-        System.out.println(phrases.aboutDictophone);
     }
 
     @Override
@@ -76,10 +77,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessage(chatId, phrases.greeting);
                 break;
             case "/projects":
-                sendMessage(chatId, phrases.aboutDictophone, phrases.getDictophone());
-                sendMessage(chatId, phrases.aboutFriendsMap, phrases.getFriendsMap());
-                sendMessage(chatId, phrases.aboutRubiksCube, phrases.getRubiksCube());
-                sendMessage(chatId, phrases.aboutWeatherIt, phrases.getWeatherIt());
+                for (Projects projects : Projects.values()) {
+                    String text = "<b><i>" + projects.getTitle() + "</i></b>\n\n";
+                    text += projects.getDescription();
+                    sendDocument(chatId, text, projects.getFile());
+                }
                 break;
             case "/info":
                 sendInfo(chatId);
@@ -175,7 +177,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendDocument message = new SendDocument();
         message.setChatId(String.valueOf(chatId));
         message.setCaption(text);
+        message.setParseMode(ParseMode.HTML);
         message.setDocument(new InputFile(file));
+        try{
+            execute(message);
+        }catch(TelegramApiException e){
+            System.out.println(e);
+        }
     }
 
     //Send about message
@@ -232,28 +240,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         sendMessage(chatId, phrases.aboutMihail, keyboardMarkup);
 
-    }
-
-    private void requestLanguage(long chatId){
-        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-        InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText("RU");
-        button.setCallbackData("RU_LANG_BUTTON");
-        rowInLine.add(button);
-
-        button = new InlineKeyboardButton();
-        button.setText("EN");
-        button.setCallbackData("EN_LANG_BUTTON");
-        rowInLine.add(button);
-
-        rowsInLine.add(rowInLine);
-
-        keyboardMarkup.setKeyboard(rowsInLine);
-
-        sendMessage(chatId, phrases.languageRequest, keyboardMarkup);
     }
 
 }
