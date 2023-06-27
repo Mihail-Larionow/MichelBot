@@ -46,7 +46,7 @@ public enum Projects {
     }
 
     public File getFile(){
-        return new File("");
+        return new File("./src/main/resources/images/" + title + ".png");
     }
 
 }
