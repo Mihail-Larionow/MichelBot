@@ -79,7 +79,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             case "/projects":
                 for (Projects projects : Projects.values()) {
                     String text = "<b><i>" + projects.getTitle() + "</i></b>\n\n";
-                    text += projects.getDescription();
+                    text += projects.getDescription() + "\n\n";
+                    text += projects.getTechnologies();
                     sendDocument(chatId, text, projects.getFile());
                 }
                 break;
