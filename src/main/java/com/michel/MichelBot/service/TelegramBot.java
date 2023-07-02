@@ -3,6 +3,7 @@ package com.michel.MichelBot.service;
 import com.michel.MichelBot.config.BotConfig;
 import com.michel.MichelBot.config.BotPhrases;
 import com.michel.MichelBot.info.Projects;
+import com.michel.MichelBot.logger.Logger;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -20,7 +21,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,10 +34,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig config;
     private final BotPhrases phrases;
+    private final Logger logger;
 
     public TelegramBot(BotConfig config){
         this.config = config;
         this.phrases = new BotPhrases();
+        this.logger = Logger.getInstance();
 
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("/about", "Information about this bot"));
@@ -72,6 +78,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleMessage(long chatId, String messageText){
+        DateFormat dateFormat = new SimpleDateFormat("MMddyyyyHHmmss");
+        Date date = new Date();
+        logger.logInFile(date + " " + chatId + ": " + messageText);
         switch (messageText){
             case "/start":
                 sendMessage(chatId, phrases.greeting);
