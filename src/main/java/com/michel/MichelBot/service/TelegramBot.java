@@ -67,8 +67,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if(update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
+            String userName = update.getMessage().getChat().getUserName();
             long chatId = update.getMessage().getChatId();
-            handleMessage(chatId, messageText);
+            handleMessage(chatId, messageText, userName);
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             long chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -77,10 +78,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void handleMessage(long chatId, String messageText){
-        DateFormat dateFormat = new SimpleDateFormat("MMddyyyyHHmmss");
+    private void handleMessage(long chatId, String messageText, String userName){
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         Date date = new Date();
-        logger.logInFile(date + " " + chatId + ": " + messageText);
+        logger.logInFile(dateFormat.format(date) + " " + chatId + " " + userName + ": " + messageText);
         switch (messageText){
             case "/start":
                 sendMessage(chatId, phrases.greeting);
